@@ -5,9 +5,11 @@ public class Cell {
     private int x = -1, y = -1;
     private boolean changeable;
 
-    public Cell(int value, boolean changeable) {
+    public Cell(int value, boolean changeable, int x, int y) {
         this.value = value;
         this.changeable = changeable;
+        this.x = x;
+        this.y = y;
     }
     
     public int getValue() {
@@ -26,7 +28,7 @@ public class Cell {
     public String toString() {
         switch (value) {
             case -1:
-                return "";
+                return "-";
             default:
                 return "" + value;
         }

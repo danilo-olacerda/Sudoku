@@ -6,7 +6,11 @@ import java.util.*;
 public class Board {
     private List<SubBoard> subBoards;
     
-    public Board(List<Integer> initialPositions, List<Integer> initialValues) {
+    public Board(Map<Integer, Integer> initialValues) {
+        
+    }
+    
+    public void play() {
         
     }
 }

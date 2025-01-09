@@ -94,6 +94,7 @@ public class Sudoku {
     
     private static void customBoard() {
         String entry;
+        teclado.nextLine();
         boolean keepGet = true;
         Map<Integer, Integer> numbersToInsert = new HashMap<>();
         
@@ -108,35 +109,42 @@ public class Sudoku {
                 numbersToInsert.remove(-1);
             }
         }
+        
+        game = new Board(numbersToInsert);
     }
     
     private static void filterValidInsertions(String[] entriesToFilter, Map<Integer, Integer> valuesMap) {
-        for (int i = 0; i < entriesToFilter.length; i++) {
-            String toInsert = entriesToFilter[i];
+        for (String toInsert : entriesToFilter) {
             String originalString = toInsert;
-            toInsert = toInsert.replace("\\(", "").replace("\\)", "");
+            toInsert = toInsert.replaceAll("\\(", "").replaceAll("\\)", "");
             
             String[] stringNumbers = toInsert.split(",");
             List<Integer> numbers = new ArrayList<>();
             
             try {
-                for (int j = 0; j < stringNumbers.length; j++) {
-                    numbers.add(Integer.parseInt(stringNumbers[i]));
+                for (String stringNumber : stringNumbers) {
+                    numbers.add(Integer.valueOf(stringNumber));
                 }
             } catch (Error e) {
-                System.out.println("Entrada " + originalString + " não adicionada pois o formato está inválido !");
+                notAcceptedEntry(originalString);
             }
             
             if (validateNumberList(numbers)) {
                 int key = calculatePosition(numbers.get(0), numbers.get(1));
                 int value = numbers.get(2);
                 valuesMap.put(key, value);
+            } else if (!validateIsStop(numbers)){
+                notAcceptedEntry(originalString);
             }
             
             if (validateIsStop(numbers)) {
                 valuesMap.put(-1, -1);
             }
         }
+    }
+    
+    private static void notAcceptedEntry(String entry) {
+        System.out.println("Entrada " + entry + ")" + " não adicionada pois o formato está inválido !");
     }
     
     private static boolean validateIsStop(List<Integer> list) {
@@ -157,7 +165,7 @@ public class Sudoku {
     }
     
     private static int calculatePosition(int x, int y) {
-        return ((y - 1) * 9) + x;
+        return ((y - 1) * 9) + x - 1;
     }
     
     public static List<Integer> getRandomNumbersInRange(int count) {

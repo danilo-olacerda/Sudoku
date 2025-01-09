@@ -40,7 +40,45 @@ public class SubBoard {
     
     public void printBoard(int y) {
         for (int i = 0; i < numberOfCells / 3; i++) {
+            if (i == 0 || i == numberOfCells / 3) System.out.print(" | ");
+            
             System.out.print(cells.get(i + (y * 3)) + " | ");
+        }
+    }
+    
+    public void addMove(Map<Integer, Integer> valueToAdd, int index) {
+        int initialValue = getInitialValue(index) * 27;
+        
+        for (int i = 0; i < numberOfCells; i++) {
+            int verticalToSum = (i / 3) * 9;
+            int horizontalToSum = (index % 3) * 3;
+            int innerIndexToSum = i % 3;
+            int cellKey = initialValue + verticalToSum + horizontalToSum + innerIndexToSum;
+            Cell cell = cells.get(i);
+            
+            int currentValue = valueToAdd.getOrDefault(cellKey, -1);
+            
+            if (currentValue == -1) continue;
+            
+            cell.setValue(currentValue);
+        }
+    }
+    
+    public void removeMove(List<Integer> positions, int index) {
+        int initialValue = getInitialValue(index) * 27;
+        
+        for (int i = 0; i < numberOfCells; i++) {
+            int verticalToSum = (i / 3) * 9;
+            int horizontalToSum = (index % 3) * 3;
+            int innerIndexToSum = i % 3;
+            int cellKey = initialValue + verticalToSum + horizontalToSum + innerIndexToSum;
+            Cell cell = cells.get(i);
+            
+            int currentValue = positions.indexOf(cellKey);
+            
+            if (currentValue == -1) continue;
+            
+            cell.removeValue();
         }
     }
 }

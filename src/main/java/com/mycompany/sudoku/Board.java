@@ -1,6 +1,7 @@
 package com.mycompany.sudoku;
 import com.mycompany.sudoku.SubBoard;
 import java.util.*;
+import java.util.regex.*;
 
 public class Board {
     private static Scanner teclado = new Scanner(System.in);
@@ -71,6 +72,7 @@ public class Board {
             case 3:
                 break;
             case 4:
+                getHint();
                 break;
             case 5:
                 return;
@@ -103,6 +105,68 @@ public class Board {
             subBoard.addMove(numbersToInsert, i);
             i++;
         }
+    }
+    
+    private void getHint() {
+        printGame();
+        
+        System.out.print
+            ("""
+            Dica de jogada: ([linha],[coluna])
+            """);
+        
+        String entry;
+        entry = teclado.nextLine();
+        
+        if (entry.isEmpty()) {
+            entry = teclado.nextLine();
+        } 
+        
+        String regex = "\\([1-9],[1-9]\\)";
+        
+        Pattern pattern = Pattern.compile(regex);
+        Matcher matcher = pattern.matcher(entry);
+        
+        while (!matcher.matches()) {
+            System.out.println("Entrada inválida, tente novamente ([linha],[coluna]): ");
+            entry = teclado.nextLine();
+            matcher = pattern.matcher(entry);
+        }
+        
+        String originalEntry = entry;
+        entry = entry.replace("(", "").replace(")", "");
+        
+        String[] coordString = entry.split(",");
+        
+        int x = Integer.parseInt(coordString[0]);
+        int y = Integer.parseInt(coordString[1]);
+        int pos = calculatePosition(x, y);
+        
+        List<Integer> freeNumbers = new ArrayList<>();
+        Map<Integer, Boolean> usedNumbers = new HashMap<>();
+        
+        for (int i = 1; i <= numberOfSubBoards; i++) {
+            usedNumbers.put(i, false);
+        }
+        
+        int i = 0;
+        for (SubBoard subBoard : subBoards) {
+            subBoard.getInUse(x - 1, y - 1, pos, i, usedNumbers);
+            i++;
+        }
+        
+        for (Map.Entry<Integer, Boolean> usedNumber : usedNumbers.entrySet()) {
+            Integer key = usedNumber.getKey();
+            Boolean value = usedNumber.getValue();
+            
+            if (!value) freeNumbers.add(key);
+        }
+        
+        
+        
+        System.out.print("Possíveis jogadas para a posição " + originalEntry + ": ");
+        printArrayList(freeNumbers);
+        System.out.println("");
     }
     
     private void removeMove() {
@@ -218,5 +282,18 @@ public class Board {
     
     private static int calculatePosition(int x, int y) {
         return ((y - 1) * 9) + x - 1;
+    }
+    
+    private void printArrayList(List<Integer> list) {
+        System.out.print("[");
+        
+        for (int i = 0; i < list.size(); i++) {
+            int value = list.get(i);
+            System.out.print(value);
+            
+            if (i != list.size() - 1) System.out.print(",");
+        }
+        
+        System.out.print("]");
     }
 }

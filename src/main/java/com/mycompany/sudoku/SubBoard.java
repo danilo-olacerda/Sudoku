@@ -81,4 +81,32 @@ public class SubBoard {
             cell.removeValue();
         }
     }
+    
+    public void getInUse(int x, int y, int position, int index, Map<Integer, Boolean> usedNumbers) {
+        int initialValue = getInitialValue(index) * 27 + 1;
+        boolean ownCell = false;
+        
+        for (int i = 0; i < numberOfCells; i++) {
+            int verticalToSum = (i / 3) * 9;
+            int horizontalToSum = (index % 3) * 3;
+            int innerIndexToSum = i % 3;
+            int cellKey = initialValue + verticalToSum + horizontalToSum + innerIndexToSum;
+            Cell cell = cells.get(i);
+            
+            if (cell.getX() == x || cell.getY() == y) {
+                usedNumbers.put(cell.getValue(), true);
+            }
+            
+            if (cellKey == position) {
+                ownCell = true;
+            }
+        }
+        
+        if (ownCell) {
+            for (Cell cell : cells) {
+                if (cell.getY() == y || cell.getX() == x) continue;
+                usedNumbers.put(cell.getValue(), true);
+            }
+        }
+    }
 }

@@ -1,11 +1,9 @@
 package com.mycompany.sudoku;
-import com.mycompany.sudoku.ValidBoards;
-import com.mycompany.sudoku.Board;
 import java.util.*;
 
 public class Sudoku {
     private static int gameType = -1;
-    private static Scanner teclado = new Scanner(System.in);
+    private static final Scanner teclado = new Scanner(System.in);
     private static int quantityToStart = -1;
     private static final int min = 0;
     private static final int max = 80;
@@ -19,7 +17,9 @@ public class Sudoku {
         welcomeMessage();
         setGameType();
         setBoard();
-        game.play();
+        boolean isPlayAgain = game.play();
+        
+        if (isPlayAgain) startNewGame();
     }
     
     private static void welcomeMessage() {
@@ -176,6 +176,8 @@ public class Sudoku {
         }
 
         Collections.shuffle(numbers);
+        
+        
 
         return numbers.subList(0, count);
     }

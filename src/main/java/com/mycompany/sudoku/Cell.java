@@ -33,7 +33,7 @@ public class Cell {
     }
 
     public boolean isChangeable() {
-        return changeable;
+        return this.changeable;
     }
 
     @Override

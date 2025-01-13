@@ -20,7 +20,7 @@ public class Board {
         System.out.println("Jogo criado com sucesso ! (As posições iniciais não podem ser alteradas)");
         printGame();
         chooseAction();
-        
+
         return isPlayAgain;
     }
 
@@ -73,7 +73,7 @@ public class Board {
 
     private void doAction(int option) {
         boolean win = false;
-        
+
         switch (option) {
             case 1:
                 addMove();
@@ -91,7 +91,7 @@ public class Board {
                 System.out.println("Obrigado por jogar ! Saindo...");
                 return;
         }
-        
+
         if (win) {
             playAgain();
             return;
@@ -330,14 +330,16 @@ public class Board {
             }
         }
 
-        return isValid && this.isBoardValid();
+        boolean validBoard = isBoardValid();
+
+        return isValid && validBoard;
     }
-    
+
     public void playAgain() {
         System.out.println("PARABÉNS VOCÊ GANHOU !");
-        
+
         int option = -1;
-        
+
         System.out.print(
                 """
                 Deseja jogar novamente ?
@@ -363,12 +365,13 @@ public class Board {
                 teclado.nextLine();
             }
         }
-        
+
         isPlayAgain = option == 1;
     }
 
     public boolean isBoardValid() {
         int[][] matrix = new int[9][9];
+        boolean[][] matrixInitial = new boolean[9][9];
         boolean isValid = true;
 
         for (int subBoardIndex = 0; subBoardIndex < 9; subBoardIndex++) {
@@ -376,37 +379,38 @@ public class Board {
 
             for (int i = 0; i < 9; i++) {
                 Cell cell = subBoard.getCell(i);
-                
                 int x = subBoard.calcX(subBoardIndex, i);
                 int y = subBoard.calcY(subBoardIndex, i);
-                
                 matrix[x][y] = cell.getValue();
+                matrixInitial[x][y] = cell.isChangeable();
             }
         }
 
         for (int i = 0; i < 9; i++) {
-            boolean[] rowUsed = new boolean[10];
-            boolean[] colUsed = new boolean[10];
-
             for (int j = 0; j < 9; j++) {
-                int rowValue = matrix[i][j];
-                int colValue = matrix[j][i];
+                int value = matrix[i][j];
 
-                if (rowValue != -1) {
-                    if (rowUsed[rowValue]) {
-                        System.out.println("Posição (" + (i + 1) + "," + (j + 1) + ") é inválida pois o número já está presente na linha!");
-                        isValid = false;
-                    } else {
-                        rowUsed[rowValue] = true;
+                if (value != -1) {
+                    for (int k = 0; k < 9; k++) {
+                        if (k != j && matrix[i][k] == value) {
+                            if (matrixInitial[i][j]) {
+                                System.out.println("Posição (" + (i + 1) + "," + (j + 1) + ") é inválida pois o número já está presente na coluna!");
+                                isValid = false;
+                            }
+                            break;
+                        }
                     }
                 }
 
-                if (colValue != -1) {
-                    if (colUsed[colValue]) {
-                        System.out.println("Posição (" + (j + 1) + "," + (i + 1) + ") é inválida pois o número já está presente na coluna!");
-                        isValid = false;
-                    } else {
-                        colUsed[colValue] = true;
+                if (value != -1) {
+                    for (int k = 0; k < 9; k++) {
+                        if (k != i && matrix[k][j] == value) {
+                            if (matrixInitial[k][j]) {
+                                System.out.println("Posição (" + (k + 1) + "," + (j + 1) + ") é inválida pois o número já está presente na linha!");
+                                isValid = false;
+                            }
+                            break;
+                        }
                     }
                 }
             }
